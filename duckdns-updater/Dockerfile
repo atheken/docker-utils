@@ -1,0 +1,8 @@
+FROM alpine
+ENV DUCKDNS_DOMAINS=
+ENV DUCKDNS_TOKEN=
+ENV DUCKDNS_UPDATE_FREQUENCY_IN_SECONDS=300
+
+RUN apk add bash curl
+COPY ./update /update
+ENTRYPOINT [ "/update" ]
