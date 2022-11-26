@@ -1,0 +1,10 @@
+SocksPort 0.0.0.0:9050
+NewCircuitPeriod 30
+MaxCircuitDirtiness 300
+LearnCircuitBuildTimeout 1
+ExitRelay 0
+#EntryNodes {us} StrictNodes 1
+ExitNodes {us} StrictNodes 1
+RefuseUnknownExits 1
+ClientOnly 1
+HTTPTunnelPort 0.0.0.0:9080
