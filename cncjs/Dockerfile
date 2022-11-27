@@ -1,4 +1,4 @@
-FROM --platform=amd64 alpine:3.17
+FROM alpine:3.17
 ENV NO_UPDATE_NOTIFIER true
 ENV npm_config_update_notifier false
 RUN apk add npm python3 make
