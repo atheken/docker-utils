@@ -1,5 +1,6 @@
 using app;
 using app.Processors;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
 builder.Services
     .AddAuthentication(l => l.AddScheme("Basic", f => f.HandlerType = typeof(HeaderAuth)));
 
+builder.Services.AddLogging();
 builder.Services.AddAuthorization();
 builder.Services.AddRequestDecompression();
 builder.Services.AddResponseCompression();
@@ -44,6 +46,14 @@ builder.Services.AddSwaggerGen(opt =>
 var app = builder.Build();
 app.UseRequestDecompression();
 app.UseResponseCompression();
+app.Use((context, next) =>
+{
+    if (!context.Request.HasJsonContentType())
+    {
+        context.Request.Headers.ContentType = "application/json";
+    }
+    return next(context);
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -52,7 +62,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapPost("/inbound", new RecipeImporter(app.Services.GetService<ILogger>()).ImportRecipe)
+app.MapGet("/", () => "Hello!");
+
+app.MapPost("/inbound", new RecipeImporter(app.Logger).ImportRecipe)
     .WithName("Default")
     .RequireAuthorization();
 

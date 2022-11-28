@@ -17,7 +17,8 @@ public class RecipeImporter
     public RecipeImporter(ILogger logger, HttpClient? client = null,
         string? baseUrl = null, string? apiKey = null)
     {
-        _failedDir =  (Environment.GetEnvironmentVariable("APP_DATA_DIR") ?? Directory.CreateTempSubdirectory().Name) + "/failed";
+        
+        _failedDir =  (Environment.GetEnvironmentVariable("APP_DATA_DIR") ?? Path.GetTempPath()) + "/failed";
         Directory.CreateDirectory(_failedDir);
         
         _baseUrl = baseUrl ?? Environment.GetEnvironmentVariable("MEALIE_BASE_URL");

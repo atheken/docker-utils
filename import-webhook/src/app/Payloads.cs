@@ -17,7 +17,7 @@ public record EmailAddress(string? Email = null, string? Name = null, string? Ma
 /// <param name="HtmlBody"></param>
 /// <param name="TextBody"></param>
 /// <param name="MessageID"></param>
-public record InboundPayload(EmailAddress FromFull, EmailAddress? ToFull,
+public record InboundPayload(EmailAddress? FromFull, EmailAddress? ToFull,
     string? Subject = null, string? HtmlBody = null, string? TextBody = null, string? MessageId = null);
 
 /// <summary>

@@ -11,4 +11,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="zjnhMN\failed\ffde8ffd-69ea-42d7-b44a-e77252a01299.json" />
+    <_ContentIncludedByDefault Remove="EiGGCO\failed\be8b11b5-95c3-4a92-8524-b1171dbc0c6b.json" />
+  </ItemGroup>
+
 </Project>
