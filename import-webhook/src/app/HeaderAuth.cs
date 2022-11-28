@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
+using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 
@@ -34,12 +35,19 @@ public class HeaderAuth : IAuthenticationHandler
     public async Task<AuthenticateResult> AuthenticateAsync()
     {
         await Task.CompletedTask;
-        return _context.Request.Headers["Authorization"] == AuthToken ?
-         AuthenticateResult.Success(new AuthenticationTicket(User, "http_auth")) :
-         AuthenticateResult.Fail("The provided token is not valid.");
+        var key = GetKeyFromHeader(_context.Request.Headers["Authorization"].SingleOrDefault());
+        if (key == AuthToken)
+        {
+            return AuthenticateResult.Success(new AuthenticationTicket(User, "http_auth"));
+        }
+        else
+        {
+            return AuthenticateResult.Fail("The provided token is not valid.");
+        }
     }
 
-    public async Task ChallengeAsync(AuthenticationProperties properties)
+
+    public async Task ChallengeAsync(AuthenticationProperties? properties)
     {
         await Task.CompletedTask;
         _context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
@@ -47,8 +55,26 @@ public class HeaderAuth : IAuthenticationHandler
             new {Message = "Please provide an authorization"});
     }
 
-    public async Task ForbidAsync(AuthenticationProperties properties)
+    public async Task ForbidAsync(AuthenticationProperties? properties)
     {
         await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Reads the password out of a basic auth header.
+    /// </summary>
+    /// <param name="header">The header from which to read the basic auth key.</param>
+    /// <returns></returns>
+    private string? GetKeyFromHeader(string? header)
+    {
+        try
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(header.Trim()[6..]))
+                .Split(':').LastOrDefault();
+        }
+        catch
+        {
+            return null;
+        }
     }
 } 
