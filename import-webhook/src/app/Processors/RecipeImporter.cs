@@ -50,7 +50,7 @@ public class RecipeImporter
                     {
                         await using var file = File.OpenWrite($"{_failedDir}/{payload?.MessageId ?? Guid.NewGuid().ToString()}.json");
                         await SerializeAsync(file, payload);
-                        result.EnsureSuccessStatusCode();
+                        return new Status("Recipe was accepted, but not processed...");
                     }
                     _logger.LogInformation($"Recipe imported from message: `{payload.MessageId}`!");
                 }
