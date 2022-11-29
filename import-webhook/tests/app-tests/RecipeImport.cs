@@ -11,17 +11,23 @@ public class RecipeImporterTests : HttpMessageHandler
 {
     private HttpRequestMessage? _sentRequest;
 
-    [Fact]
-    public async Task ImporterParsesRecipeUrl()
+    [Theory]
+    [InlineData("asdkdlksdkls<https://asdf.example.com>\n'dsdsadasasd")]
+    [InlineData("asdkdlksdkls<\nhttps://asdf.example.com>\n'dsdsadasasd")]
+    [InlineData("asdkdlksdkls<\nhttps://asdf.example.com >\n'dsdsadasasd")]
+    [InlineData("asdkdlksdkls\"https://asdf.example.com >\n'dsdsadasasd")]
+    [InlineData("asdkdlksdkls'https://asdf.example.com >\n'dsdsadasasd")]
+    [InlineData("asdkdlksdkls https://asdf.example.com >\n'dsdsadasasd")]
+    [InlineData("https://asdf.example.com")]
+    public async Task ImporterParsesRecipeUrl(string content)
     {
         var key = "asdf";
-        
+        var url = "https://asdf.example.com";
+
         var importer = new RecipeImporter(new Logger<RecipeImporter>(new NullLoggerFactory()), 
             new HttpClient(this), "https://example.com", key);
         
-        var url = "https://asdf.example.com";
-        
-        var payload = GetRequestPayload(url);
+        var payload = GetRequestPayload(content);
         await importer.ImportRecipe(payload);
         
         Assert.NotNull(_sentRequest);
@@ -37,11 +43,10 @@ public class RecipeImporterTests : HttpMessageHandler
 
     }
 
-    private InboundPayload GetRequestPayload(string url)
+    private InboundPayload GetRequestPayload(string content)
     {
         return new InboundPayload(new EmailAddress("atheken@example.com"), 
-            new EmailAddress("recipes@example.com"), "Recipe Import",
-            $"asdkdlksdkls {url}\n'dsdsadasasd");
+            new EmailAddress[]{new ("recipes@example.com") }, "Recipe Import", HtmlBody: content);
     }
 
     /// <summary>

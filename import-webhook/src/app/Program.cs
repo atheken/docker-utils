@@ -1,5 +1,7 @@
+using System.Text.Json;
 using app;
 using app.Processors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.OpenApi.Models;
 
@@ -64,7 +66,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/", () => "Hello!");
 
-app.MapPost("/inbound", new RecipeImporter(app.Logger).ImportRecipe)
+app.MapPost("/inbound",new RecipeImporter(app.Logger).ImportRecipe)
     .WithName("Default")
     .RequireAuthorization();
 
