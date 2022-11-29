@@ -8,8 +8,7 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5225",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "APP_API_TOKEN": "TEST_TOKEN"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

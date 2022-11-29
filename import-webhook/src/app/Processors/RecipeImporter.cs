@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Options;
 using static System.Text.Json.JsonSerializer;
 
 namespace app.Processors;
@@ -14,17 +15,16 @@ public class RecipeImporter
     private readonly ILogger _logger;
     private readonly string? _failedDir;
 
-    public RecipeImporter(ILogger logger, HttpClient? client = null,
-        string? baseUrl = null, string? apiKey = null)
+    public RecipeImporter(IOptions<ImporterSettings> settings, 
+        ILogger<RecipeImporter> logger, HttpClient? client = null)
     {
-        
-        _failedDir =  (Environment.GetEnvironmentVariable("APP_DATA_DIR") ?? Path.GetTempPath()) + "/failed";
+        var options = settings.Value;
+        _failedDir =  Path.Combine(options.DataDir , "failed");
         Directory.CreateDirectory(_failedDir);
-        
-        _baseUrl = baseUrl ?? Environment.GetEnvironmentVariable("MEALIE_BASE_URL");
-        var mealieApiKey = apiKey ?? Environment.GetEnvironmentVariable("MEALIE_API_KEY");
+
+        _baseUrl = options.Mealie.BaseUrl;
         _client = client ?? new HttpClient();
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", mealieApiKey);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.Mealie.ApiKey);
         _logger = logger;
     }
     

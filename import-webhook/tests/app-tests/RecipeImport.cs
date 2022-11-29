@@ -3,6 +3,7 @@ using app;
 using app.Processors;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using static System.Text.Json.JsonSerializer;
 
 namespace app_tests;
@@ -21,11 +22,17 @@ public class RecipeImporterTests : HttpMessageHandler
     [InlineData("https://asdf.example.com")]
     public async Task ImporterParsesRecipeUrl(string content)
     {
-        var key = "asdf";
         var url = "https://asdf.example.com";
 
-        var importer = new RecipeImporter(new Logger<RecipeImporter>(new NullLoggerFactory()), 
-            new HttpClient(this), "https://example.com", key);
+        var settings = new ImporterSettings()
+        {
+            ApiToken = "TEST_TOKEN",
+            Mealie = new MealieConfig("https://mealie.example.com", "ASDD:::SA:SA")
+        };
+        
+        var importer = new RecipeImporter(new OptionsWrapper<ImporterSettings>(settings), 
+            new Logger<RecipeImporter>(new NullLoggerFactory()), 
+            new HttpClient(this));
         
         var payload = GetRequestPayload(content);
         await importer.ImportRecipe(payload);
@@ -33,9 +40,9 @@ public class RecipeImporterTests : HttpMessageHandler
         Assert.NotNull(_sentRequest);
         
         var authHeader = _sentRequest.Headers.Authorization;
-        Assert.Equal(key, authHeader.Parameter);
+        Assert.Equal(settings.Mealie.ApiKey, authHeader.Parameter);
         Assert.Equal("Bearer", authHeader.Scheme);
-        Assert.Equal("example.com", _sentRequest.RequestUri.Host);
+        Assert.Equal($"{settings.Mealie.BaseUrl}/api/recipes/create-url", _sentRequest.RequestUri.ToString());
         
         Assert.Equal("/api/recipes/create-url", _sentRequest.RequestUri.PathAndQuery);
         Assert.Equal(HttpMethod.Post, _sentRequest.Method);

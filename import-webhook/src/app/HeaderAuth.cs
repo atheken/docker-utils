@@ -5,26 +5,24 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
+using app.Processors;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 
 namespace app;
 
 public class HeaderAuth : IAuthenticationHandler
 {
-    private static readonly string AuthToken = Environment.GetEnvironmentVariable("APP_API_TOKEN");
-
-    static HeaderAuth()
-    {
-        if (AuthToken == null)
-        {
-            Environment.FailFast("APP_API_TOKEN is not set!");
-        }
-    }
-    
     private static readonly ClaimsPrincipal User = 
         new (new GenericPrincipal(new GenericIdentity("api"), new[] {"api"}));
     
     private HttpContext _context;
+    private readonly IOptions<ImporterSettings> _settings;
+
+    public HeaderAuth(IOptions<ImporterSettings> settings)
+    {
+        _settings = settings;
+    }
 
     public async Task InitializeAsync(AuthenticationScheme scheme, HttpContext context)
     {
@@ -36,7 +34,7 @@ public class HeaderAuth : IAuthenticationHandler
     {
         await Task.CompletedTask;
         var key = GetKeyFromHeader(_context.Request.Headers["Authorization"].SingleOrDefault());
-        if (key == AuthToken)
+        if (key == _settings.Value.ApiToken)
         {
             return AuthenticateResult.Success(new AuthenticationTicket(User, "http_auth"));
         }
