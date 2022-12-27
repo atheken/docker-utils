@@ -1,8 +1,8 @@
-FROM --platform=amd64 caddy:2.6.2-builder-alpine AS builder
+FROM caddy:2.6.2-builder-alpine AS builder
 
 RUN xcaddy build \
     --with github.com/mholt/caddy-webdav \
-    --with github.com/greenpau/caddy-security
+    --with github.com/caddy-dns/duckdns
 
 FROM --platform=amd64 caddy:2.6.2-alpine
 
