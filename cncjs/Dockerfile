@@ -19,7 +19,7 @@ ENV NO_UPDATE_NOTIFIER true
 ENV npm_config_update_notifier false
 RUN mkdir /app
 WORKDIR /app
-RUN npm install -g cncjs@latest
+RUN npm install -g cncjs@1.10.1
 COPY start.sh /app/start
 EXPOSE 8000
 #ENV PATH="/app/node_modules/.bin:${PATH}"
