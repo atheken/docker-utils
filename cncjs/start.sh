@@ -4,7 +4,7 @@ _stop(){
     kill -9 $child
 }
 
-./node_modules/.bin/cncjs > /dev/stdout 2> /dev/stderr
+cncjs > /dev/stdout 2> /dev/stderr
 
 $child =$!
 
