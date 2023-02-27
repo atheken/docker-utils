@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-echo "Started socket on '/tmp/ttyFAKE'..."
-exec socat PTY,raw,link=/tmp/ttyFAKE,echo=0 "EXEC:'./grbl_sim.exe -n -s step.out -b block.out',pty,raw,echo=0"
+echo "Starting socket on '127.0.0.1:9600'..."
+exec socat -d -d TCP-LISTEN:9600 "EXEC:'./grbl-sim 1.0 -s /dev/stdout -b /dev/stdout',pty,raw,echo=0"
