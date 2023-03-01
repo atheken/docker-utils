@@ -16,6 +16,8 @@ RUN apt-get install -y bash socat screen
 RUN mkdir /app
 WORKDIR /app
 COPY --from=build /app/grbl/grbl-sim/grbl_sim.exe /app/grbl-sim
+ENV GRBL_COMMENT="#\n"
+ENV GRBL_REALTIME_FACTOR="1.0"
 EXPOSE 9600
 COPY start.sh /app/start.sh
 ENTRYPOINT [ "/app/start.sh" ]
