@@ -16,6 +16,7 @@ RUN apt-get install -y bash socat screen
 RUN mkdir /app
 WORKDIR /app
 COPY --from=build /app/grbl/grbl-sim/grbl_sim.exe /app/grbl-sim
+ENV GRBL_TIME_STEP="1.0"
 ENV GRBL_ARGS="#\n"
 ENV GRBL_REALTIME_FACTOR="1.0"
 ENV GRBL_ARGS=""
