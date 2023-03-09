@@ -12,12 +12,13 @@ trap exit_now KILL
 
 while [[ 1 ]] 
 do
-	curl -kq "https://www.duckdns.org/update?domains=$DUCKDNS_DOMAINS&token=$DUCKDNS_TOKEN&ip="
+	echo 'Updating domains...'
+	curl -ksq "https://www.duckdns.org/update?domains=$DUCKDNS_DOMAINS&token=$DUCKDNS_TOKEN&ip="
 	result=$?
-	echo 'Domains updated successfull.'
+	echo 'Domains updated successful.'
 	if [[ -n "$HEALTHCHECK_URL" ]]; then
 		if [[ $result -eq 0 ]]; then
-			curl -kq $HEALTHCHECK_URL
+			curl -ksq $HEALTHCHECK_URL
 			echo 'Successfully notified monitor.'
 		fi
 	fi
